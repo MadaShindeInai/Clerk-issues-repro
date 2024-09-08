@@ -1,0 +1,12 @@
+{
+  "niceAdvice": "NiceAdvice",
+  "btn": {
+    "toQC": "Ask a Question",
+    "becomeExpert": "Become an Expert",
+    "respond": "Respond",
+    "responding": "Responding",
+    "edit": "Edit",
+    "myExpertPage": "View Your Expert Page",
+    "back": "Back"
+  }
+}

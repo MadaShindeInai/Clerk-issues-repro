@@ -1,0 +1,12 @@
+{
+  "niceAdvice": "NiceAdvice",
+  "btn": {
+    "toQC": "Задать вопрос",
+    "becomeExpert": "Стать экспертом",
+    "respond": "Откликнуться",
+    "responding": "Откликаемся...",
+    "edit": "Редактировать",
+    "myExpertPage": "Моя страница эксперта",
+    "back": "Назад"
+  }
+}

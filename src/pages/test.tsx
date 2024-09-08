@@ -3,6 +3,38 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { api } from "~/utils/api";
 import { type GetStaticPropsContext } from "next";
 import { useTranslations } from "~/hooks";
+import { useRouter } from "next/router";
+
+enum Locale {
+  pl = "PL",
+  en = "EN",
+  ru = "РУ",
+}
+
+export const LocaleSwitcher = (_: { footer?: boolean }) => {
+  const router = useRouter();
+  const { locales = [], pathname, query, asPath } = router;
+  const changeLocale = (locale: string) => {
+    // change just the locale and maintain all other route information including href's query
+    void router.push({ pathname, query }, asPath, { locale });
+  };
+
+  return (
+    <div className="flex gap-2">
+      {locales.map((locale) => {
+        return (
+          <div
+            key={locale}
+            onClick={() => changeLocale(locale)}
+            className="w-10 border text-center text-white"
+          >
+            {Locale[locale as keyof typeof Locale]}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 export const getStaticProps = async ({
   locale = "pl",
@@ -23,6 +55,7 @@ export default function Home() {
     <>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
+          <LocaleSwitcher />
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
             {t("btn.toQC")}
           </h1>
