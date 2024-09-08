@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { api } from "~/utils/api";
 import { type GetStaticPropsContext } from "next";
 import { useTranslations } from "~/hooks";
 
@@ -16,7 +15,6 @@ export const getStaticProps = async ({
 };
 
 export default function Home() {
-  const hello = api.post.hello.useQuery({ text: "from tRPC" });
   const { t } = useTranslations("common");
 
   return (
@@ -50,9 +48,6 @@ export default function Home() {
               </div>
             </Link>
           </div>
-          <p className="text-2xl text-white">
-            {hello.data ? hello.data.greeting : "Loading tRPC query..."}
-          </p>
         </div>
       </main>
     </>

@@ -10,9 +10,12 @@ import {
   SignedOut,
   SignInButton,
   UserButton,
+  useUser,
 } from "@clerk/nextjs";
 import { useRouter } from "next/router";
 import Link from "next/link.js";
+import { useTranslations } from "~/hooks";
+import { type PropsWithChildren } from "react";
 enum Locale {
   pl = "PL",
   en = "EN",
@@ -44,6 +47,66 @@ export const LocaleSwitcher = (_: { footer?: boolean }) => {
   );
 };
 
+const Layout = ({ children }: PropsWithChildren) => {
+  const { t } = useTranslations("common");
+  const { user } = useUser();
+  const { data } = api.post.getUser.useQuery(
+    { id: user?.id ?? "" },
+    { enabled: !!user },
+  );
+
+  return (
+    <div className={GeistSans.className}>
+      <div className="flex gap-3">
+        <div className="h-10 w-10 cursor-pointer rounded-full">
+          <SignedIn>
+            <UserButton
+              // afterSignOutUrl={asPath}
+              appearance={{
+                elements: {
+                  userButtonAvatarBox: {
+                    width: 40,
+                    height: 40,
+                  },
+                },
+              }}
+            >
+              <UserButton.MenuItems>
+                {!!data && data.isExpert ? (
+                  <UserButton.Link
+                    label={t("btn.myExpertPage")}
+                    labelIcon={<div>1</div>}
+                    href="/test"
+                  />
+                ) : (
+                  <UserButton.Link
+                    label={t("btn.becomeExpert")}
+                    labelIcon={<div>2</div>}
+                    href="/test2"
+                  />
+                )}
+              </UserButton.MenuItems>
+            </UserButton>
+          </SignedIn>
+          <SignedOut>
+            <SignInButton>
+              <button className="h-full w-full text-sm">Sign in</button>
+            </SignInButton>
+          </SignedOut>
+        </div>
+        <LocaleSwitcher />
+        <Link href="/test">GO TO TEST</Link>
+        {!!data && data.isExpert ? (
+          <Link href="/test">{t("btn.myExpertPage")}</Link>
+        ) : (
+          <Link href="/test2">{t("btn.becomeExpert")}</Link>
+        )}
+      </div>
+      {children}
+    </div>
+  );
+};
+
 const MyApp: AppType = ({ Component, pageProps }) => {
   const { asPath } = useRouter();
 
@@ -63,65 +126,9 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       }}
       afterSignOutUrl={asPath}
     >
-      <div className={GeistSans.className}>
-        <div className="flex gap-3">
-          <div className="h-10 w-10 cursor-pointer rounded-full">
-            <SignedIn>
-              <UserButton
-                // afterSignOutUrl={asPath}
-                appearance={{
-                  elements: {
-                    userButtonAvatarBox: {
-                      width: 40,
-                      height: 40,
-                    },
-                  },
-                }}
-              >
-                {/* <UserButton.MenuItems>
-          {isExpert && !!userData ? (
-            <UserButton.Link
-              label={t("btn.myExpertPage")}
-              labelIcon={
-                <Image
-                  className="h-4 w-4 object-cover object-center"
-                  width={16}
-                  height={16}
-                  src="/images/icy/icon/promouter_cube_transparent.png"
-                  alt="promouter icon"
-                />
-              }
-              href={getExpertUrl(userData.slug)}
-            />
-          ) : (
-            <UserButton.Link
-              label={t("btn.becomeExpert")}
-              labelIcon={
-                <Image
-                  className="h-4 w-4 object-cover object-center"
-                  width={16}
-                  height={16}
-                  src="/images/icy/icon/promouter_cube_transparent.png"
-                  alt="promouter icon"
-                />
-              }
-              href={EXPERT_CREATE_ROUTE}
-            />
-          )}
-        </UserButton.MenuItems> */}
-              </UserButton>
-            </SignedIn>
-            <SignedOut>
-              <SignInButton>
-                <button className="h-full w-full text-sm">Sign in</button>
-              </SignInButton>
-            </SignedOut>
-          </div>
-          <LocaleSwitcher />
-          <Link href="/test">GO TO TEST</Link>
-        </div>
+      <Layout>
         <Component {...pageProps} />
-      </div>
+      </Layout>
     </ClerkProvider>
   );
 };
